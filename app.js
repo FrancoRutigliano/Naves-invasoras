@@ -1,5 +1,6 @@
 const grid = document.querySelector('.grid');
 let currentShooterIndex = 202;
+let width = 15;
 
 for(let i = 0; i < 225; i++){
   const square = document.createElement('div');
@@ -21,6 +22,48 @@ function draw() {
   }
 }
 
+
+function remove() {
+  for(let i = 0; i < alienInvaders.length; i++){
+    squares[alienInvaders[i]].classList.remove('invader');
+  }
+}
+
 draw();
 
 squares[currentShooterIndex].classList.add('shooter');
+
+function moveshooter(e) {
+squares[currentShooterIndex].classList.remove('shooter');
+
+switch(e.key){
+  case 'ArrowLeft':
+    if(currentShooterIndex % width !== 0) currentShooterIndex -= 1;
+  break;
+  case 'ArrowRight':
+    if(currentShooterIndex % width < width - 1) currentShooterIndex += 1;
+  break;
+}
+
+squares[currentShooterIndex].classList.add('shooter');
+
+}
+
+
+document.addEventListener('keydown', moveshooter)
+
+
+function moveInvaders() {
+  const leftEdge = alienInvaders[0] % width === 0;
+  const rightEdge = alienInvaders[alienInvaders.length - 1] % width - 1;
+  
+  remove();
+
+  for(let i = 0; i < alienInvaders.length; i++){
+    alienInvaders[i] += 1;
+  }
+
+  draw();
+}
+
+setInterval(moveInvaders, 500);

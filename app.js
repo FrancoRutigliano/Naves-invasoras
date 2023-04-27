@@ -1,6 +1,10 @@
 const grid = document.querySelector('.grid');
+const resultDisplay = document.querySelector('.results');
 let currentShooterIndex = 202;
 let width = 15;
+let direction = 1;
+let invaderID;
+let goingRight = true;
 
 for(let i = 0; i < 225; i++){
   const square = document.createElement('div');
@@ -31,7 +35,7 @@ function remove() {
 
 draw();
 
-squares[currentShooterIndex].classList.add('shooter');
+//squares[currentShooterIndex].classList.add('shooter');
 
 function moveshooter(e) {
 squares[currentShooterIndex].classList.remove('shooter');
@@ -55,15 +59,47 @@ document.addEventListener('keydown', moveshooter)
 
 function moveInvaders() {
   const leftEdge = alienInvaders[0] % width === 0;
-  const rightEdge = alienInvaders[alienInvaders.length - 1] % width - 1;
+  const rightEdge = alienInvaders[alienInvaders.length - 1] % width === width - 1;
   
   remove();
 
+  if(rightEdge && goingRight) {
+    for(let i = 0; i < alienInvaders.length; i++){
+      alienInvaders[i] += width + 1;
+      direction = -1;
+      goingRight = false;
+    }
+  }
+
+
+  if(leftEdge && !goingRight){
+    for (let i = 0; i < alienInvaders.length; i++){
+      alienInvaders[i] += width - 1;
+      direction = 1;
+      goingRight = true;
+    }
+  }
+
+
   for(let i = 0; i < alienInvaders.length; i++){
-    alienInvaders[i] += 1;
+    alienInvaders[i] += direction;
   }
 
   draw();
+
+  if(squares[currentShooterIndex].classList.contains('invader', 'shooter')){
+    
+    resultDisplay.innerHTML = 'GAME OVER';
+    
+    clearInterval(invaderID);
+  }
+
+  for(let i = 0; i < alienInvaders.length; i++){
+    if(alienInvaders[i] > squares.length){
+      resultDisplay.innerHTML= 'GAME OVER';
+    }
+  }
+
 }
 
-setInterval(moveInvaders, 500);
+invaderID = setInterval(moveInvaders, 500);
